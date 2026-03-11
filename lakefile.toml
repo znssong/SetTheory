@@ -1,0 +1,12 @@
+name = "SetTheory"
+version = "0.1.0"
+defaultTargets = ["SetTheory"]
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "06e947358d88e36af006f915f79a04a10fd43cc4"
+
+[[lean_lib]]
+name = "SetTheory"
+leanOptions = {autoImplicit = false, backward.isDefEq.respectTransparency = false}
