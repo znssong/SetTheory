@@ -15,7 +15,7 @@ lemma sSupClosed_Iic (x : α) : sSupClosed (Iic x) := fun _ hsub hne _ => csSup_
 lemma sSupClosed_bot : sSupClosed (⊥ : Set α) := by simp [sSupClosed]
 
 class ContinuousOrderMap (f : α → β) where
-  map_le_iff : ∀ x y, f x ≤ f y ↔ x ≤ y
+  monotone : Monotone f
   preimage_Ici_closed : ∀ x, sInfClosed (f ⁻¹' (Ici x))
   preimage_Iic_closed : ∀ x, sSupClosed (f ⁻¹' (Iic x))
 
@@ -29,7 +29,7 @@ variable (f : α → β) [ContinuousOrderMap f]
 open ContinuousOrderMap
 
 instance : ContinuousOrderMap (toDual ∘ f ∘ ofDual) where
-  map_le_iff := swap (map_le_iff (f := f))
+  monotone := monotone.dual
   preimage_Ici_closed := preimage_Iic_closed (f := f)
   preimage_Iic_closed := preimage_Ici_closed (f := f)
 
@@ -39,8 +39,11 @@ lemma map_sInf' (hne : s.Nonempty) (hbdd : BddBelow s) : f (sInf s) = sInf (f ''
   refine (IsGLB.csInf_eq ?_ (by simpa)).symm
   simpa only [
     IsGLB, IsGreatest, lowerBounds, mem_image, forall_exists_index, and_imp,
-    forall_apply_eq_imp_iff₂, mem_setOf_eq, map_le_iff, upperBounds
-  ] using ⟨fun _ => csInf_le hbdd, fun y hy => preimage_Ici_closed _ _ hy hne hbdd⟩
+    forall_apply_eq_imp_iff₂, mem_setOf_eq, upperBounds
+  ] using ⟨
+    fun _ hs => monotone (csInf_le hbdd hs),
+    fun y hy => preimage_Ici_closed _ _ hy hne hbdd
+  ⟩
 
 lemma map_sInf (hne : s.Nonempty) (hbdd : BddBelow s) : f (sInf s) = ⨅ x : s, f x := by
   rw [← sInf_image', ← map_sInf' f hne hbdd]
@@ -68,7 +71,7 @@ open ContinuousOrderMapBounded ContinuousOrderMap
 variable [ContinuousOrderMapBounded f]
 
 instance : ContinuousOrderMapBounded (toDual ∘ f ∘ ofDual) where
-  map_le_iff := swap (map_le_iff (f := f))
+  monotone := monotone
   bounded_preimage_Iic := bounded_preimage_Ici (f := f)
   bounded_preimage_Ici := bounded_preimage_Iic (f := f)
   preimage_Ici_closed := preimage_Iic_closed (f := f)
@@ -83,7 +86,7 @@ lemma bddBelow_iff : BddBelow (f '' s) ↔ BddBelow s := by
     obtain ⟨b, hb⟩ := bounded_preimage_Ici (f := f) y
     obtain ⟨x, hx⟩ := hy b
     exact ⟨x, hx.1, fun le => hx.2 (hb le)⟩
-  · exact ⟨f x, by simpa [lowerBounds, map_le_iff]⟩
+  · exact ⟨f x, by simpa [lowerBounds] using fun _ hs => monotone (hx hs)⟩
 
 lemma bddAbove_iff : BddAbove (f '' s) ↔ BddAbove s := bddBelow_iff (toDual ∘ f ∘ ofDual)
 

@@ -239,7 +239,7 @@ def toOrdinal_lt {α : Ordinals M} : toOrdinal α < maxOrdinal M := by
   · simp [maxOrdinal]
 
 instance comOrdinals : ContinuousOrderMapBounded (Subtype.val : Ordinals M → M) where
-  map_le_iff := by simp
+  monotone := by simp [Monotone]
   preimage_Ici_closed := fun x S hsub hne hbdd => hsub (csInf_mem hne)
   preimage_Iic_closed := by
     intro x S hsub hne hbdd α hα
@@ -259,7 +259,7 @@ instance comOrdinals : ContinuousOrderMapBounded (Subtype.val : Ordinals M → M
     exact rank_mono le
 
 instance comToOrdinal : ContinuousOrderMap (toOrdinal (M := M)) where
-  map_le_iff := fun _ _ => toOrdinal.map_rel_iff
+  monotone := toOrdinal.monotone
   preimage_Ici_closed := by
     intro α
     by_cases! hα : α < maxOrdinal M
