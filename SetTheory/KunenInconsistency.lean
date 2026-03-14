@@ -289,7 +289,7 @@ lemma crit_not_in_range_j_f : ∀ x ∈ Func ωₘ H, apply (j fSet) x ≠ κ 0 
   rw [this, apply.elementarity]
   exact j_ne_crit
 
-lemma kunen_inconsistency : False := by
+theorem kunen_inconsistency : False := by
   apply absurd crit_in_range_j_f
   simpa using crit_not_in_range_j_f
 
@@ -299,7 +299,7 @@ open FirstOrder Language Order ZFSet
 
 variable {μ : Ordinal.{0}} [Fact (Order.IsSuccLimit μ)]
 
-lemma kunen_inconsistency_vonNeumann
+theorem kunen_inconsistency_vonNeumann
     {μ} [Fact (IsSuccLimit μ)] {j : NontrivialElementaryEmbedding (V_ μ)} :
     ⨆ n : ℕ, toOrdinal ⟨j^[n] (crit j), isOrdinal_crit_iter n⟩ = μ := by
   set! κ : ℕ → Ordinals (V_ μ) := fun n => ⟨j^[n] (crit j), isOrdinal_crit_iter n⟩ with hκ
@@ -324,7 +324,7 @@ lemma kunen_inconsistency_vonNeumann
       conv at h => enter [n]; rw [← hβ, toOrdinal.le_iff_le]
       simpa [upperBounds]
 
-lemma kunen_inconsistency_V {j : V ↪ₑ[𝓛_ZF] V} : j = .refl .. := by
+theorem kunen_inconsistency_V {j : V ↪ₑ[𝓛_ZF] V} : j = .refl .. := by
   by_contra! hj
   let j' : NontrivialElementaryEmbedding V := ⟨j, hj⟩
   set! κ : ℕ → V := fun n => j'^[n] (crit j') with hκ
