@@ -76,10 +76,6 @@ lemma IsOrdinal.not_le_iff {α β : M} (hα : IsOrdinal α) (hβ : IsOrdinal β)
   simp (config := {contextual := true}) only [← IsOrdinal.mem_iff_lt, toZFSet_simps]
   exact fun hα hβ => hα.not_subset_iff_mem hβ
 
-set_option backward.whnf.reducibleClassField true
-
-lemma a : IsVonNeumann.V rfl = (by infer_instance) := rfl
-
 lemma rank_trcl {x : M} : rank (trcl x) = rank x := by
   apply le_antisymm
   · transitivity rank (enoughTransitive x).1
@@ -216,12 +212,12 @@ def maxOrdinal : WithTop Ordinal.{0} := by
 lemma maxOrdinal_vonNeumann {μ} [Fact (IsSuccLimit μ)] : maxOrdinal (V_ μ) = μ := rfl
 lemma maxOrdinal_V : maxOrdinal V = ⊤ := rfl
 
-@[toZFSet_simps] def toZFSet_toOrdinal {α : Ordinals M} : (toOrdinal α).toZFSet = ⇓α.1 := by
+@[toZFSet_simps] lemma toZFSet_toOrdinal {α : Ordinals M} : (toOrdinal α).toZFSet = ⇓α.1 := by
   simp only [toOrdinal, RelEmbedding.coe_mk, Embedding.coeFn_mk]
   rw [IsOrdinal.toZFSet_rank_eq]
   simpa only [toZFSet_simps] using α.2
 
-def exists_toOrdinal_eq {α : Ordinal.{0}} (hα : α < maxOrdinal M) :
+lemma exists_toOrdinal_eq {α : Ordinal.{0}} (hα : α < maxOrdinal M) :
     ∃ β : Ordinals M, toOrdinal β = α := by
   split_vonNeumann hM
   · simp only [maxOrdinal_vonNeumann, WithTop.coe_lt_coe] at hα
@@ -233,7 +229,7 @@ def exists_toOrdinal_eq {α : Ordinal.{0}} (hα : α < maxOrdinal M) :
     apply toZFSet_injective
     simp [toZFSet_simps]
 
-def toOrdinal_lt {α : Ordinals M} : toOrdinal α < maxOrdinal M := by
+lemma toOrdinal_lt {α : Ordinals M} : toOrdinal α < maxOrdinal M := by
   split_vonNeumann hM
   · simpa [toOrdinal, maxOrdinal, toZFSet_simps] using mem_vonNeumann.mp α.1.2
   · simp [maxOrdinal]

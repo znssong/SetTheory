@@ -42,13 +42,13 @@ lemma HasSubset.Subset.realize_iff : formula.Realize v₂ ↔ v₂ 0 ⊆ v₂ 1 
 
 variable [HasEmpty M]
 
-def EmptyCollection.emptyCollection.formula : ZFFormula 1 := EqEmptyN 0
-
 @[simp] lemma EmptyCollection.emptyCollection.spec : ∀ x, x ∉ (∅ : M) :=
   HasEmpty.exists_empty.choose_spec.1
 
 lemma EmptyCollection.emptyCollection.eq_iff (x : M) : (∅ : M) = x ↔ ∀ y, y ∉ x :=
   HasEmpty.exists_empty.choose_eq_iff
+
+def EmptyCollection.emptyCollection.formula : ZFFormula 1 := EqEmptyN 0
 
 @[realize_simps] lemma EmptyCollection.emptyCollection.realize_iff :
     formula.Realize v₁ ↔ ∅ = v₁ 0 := by
@@ -63,7 +63,7 @@ namespace SetTheory
 
 structure V where val : ZFSet.{0}
 
-@[ext] def V.ext (x y : V) : x.val = y.val → x = y := by cases x; cases y; simp
+@[ext] lemma V.ext (x y : V) : x.val = y.val → x = y := by cases x; cases y; simp
 
 class ToV (α : Type*) where
   toV : α → V
@@ -490,7 +490,7 @@ def enoughTransitive (x : M) : {y : M // IsTransitive y ∧ x ⊆ y} := by
     simpa only [IsTransitive.toZFSet, toZFSet_simps]
       using ⟨isTransitive_vonNeumann _, subset_vonNeumann.mpr le_rfl⟩
 
-@[realize] def trcl.eu (x : M) :
+@[realize] lemma trcl.eu (x : M) :
     ∃! y : M, IsGLB {t | IsTransitive t ∧ x ⊆ t} y := by
   simpa only [exists_minimal] using (enoughTransitive x).exists_of_subtype
 
@@ -574,7 +574,7 @@ instance : OrderBot M where
   bot := ∅
   bot_le := by simp [le_iff]
 
-@[realize] def succ.eu (x : M) : ∃! y, y = Insert.insert x x := by simp
+@[realize] lemma succ.eu (x : M) : ∃! y, y = Insert.insert x x := by simp
 
 @[toV_simps] lemma succ.toV (α : M) : succ ↓α = ↓(succ α) := by
   simp only [succ.spec, toV_simps]
@@ -677,7 +677,7 @@ lemma func_sub_pairs {A B f : M} (hf : IsFunc f ∧ Dom f = A ∧ Ran f ⊆ B) :
   apply hf.2.2 ?_
   simpa only [Ran.spec] using ⟨fst x, eta.symm ▸ hx⟩
 
-@[realize] def Func.eu (A B : M) : IsSet {f | IsFunc f ∧ Dom f = A ∧ Ran f ⊆ B} := by
+@[realize] lemma Func.eu (A B : M) : IsSet {f | IsFunc f ∧ Dom f = A ∧ Ran f ⊆ B} := by
   rw [isSet_iff]
   refine ⟨𝓟 (Pairs A B), fun f hf => ?_⟩
   simpa only [powerset.spec] using func_sub_pairs hf

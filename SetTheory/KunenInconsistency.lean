@@ -139,7 +139,7 @@ def s (α : ν.ToType) : ℕ → κω := by
 termination_by α
 decreasing_by exact β.2
 
-def injective_s : Injective s := by
+lemma injective_s : Injective s := by
   intro α β s_eq
   wlog lt : α < β
   · by_cases! eq : α = β
@@ -150,7 +150,7 @@ def injective_s : Injective s := by
     dsimp only at hβ
     exact (hβ.some_mem.2 ⟨_, lt⟩ s_eq).elim
 
-def s_n_mem_X : ∀ α n, (s α n).1 ∈ X α := by
+lemma s_n_mem_X : ∀ α n, (s α n).1 ∈ X α := by
   intro α n
   simp only [s]
   generalize_proofs hα
@@ -297,10 +297,8 @@ end KunenBoundParams
 
 open FirstOrder Language Order ZFSet
 
-variable {μ : Ordinal.{0}} [Fact (Order.IsSuccLimit μ)]
-
-theorem kunen_inconsistency_vonNeumann
-    {μ} [Fact (IsSuccLimit μ)] {j : NontrivialElementaryEmbedding (V_ μ)} :
+theorem kunen_inconsistency_vonNeumann (μ) [Fact (IsSuccLimit μ)]
+    (j : NontrivialElementaryEmbedding (V_ μ)) :
     ⨆ n : ℕ, toOrdinal ⟨j^[n] (crit j), isOrdinal_crit_iter n⟩ = μ := by
   set! κ : ℕ → Ordinals (V_ μ) := fun n => ⟨j^[n] (crit j), isOrdinal_crit_iter n⟩ with hκ
   rw [funext_iff] at hκ
@@ -324,7 +322,7 @@ theorem kunen_inconsistency_vonNeumann
       conv at h => enter [n]; rw [← hβ, toOrdinal.le_iff_le]
       simpa [upperBounds]
 
-theorem kunen_inconsistency_V {j : V ↪ₑ[𝓛_ZF] V} : j = .refl .. := by
+theorem kunen_inconsistency_V (j : V ↪ₑ[𝓛_ZF] V) : j = .refl .. := by
   by_contra! hj
   let j' : NontrivialElementaryEmbedding V := ⟨j, hj⟩
   set! κ : ℕ → V := fun n => j'^[n] (crit j') with hκ

@@ -59,7 +59,7 @@ variable (vars : Fin k → α ⊕ Fin n) (ψ : L.BoundedFormula α (n + 1))
 def ofFunc := ∃' (BoundedFormula.relabel (k := 0)
   (Fin.snoc (Sum.map id Fin.castSucc ∘ vars) (.inr (.last n))) φ ⊓ ψ)
 
-def realize_ofFunc {f} [FormulaToFunction φ f] :
+lemma realize_ofFunc {f} [FormulaToFunction φ f] :
     (ofFunc φ vars ψ).Realize v w ↔
     ψ.Realize v (Fin.snoc w (f (Sum.elim v w ∘ vars))) := by
   simp (unfoldPartialApp := true) [
@@ -109,16 +109,6 @@ variable {M N : Type*} [sM : ZFStructure M] [sN : ZFStructure N]
 instance instMembershipZFStructure : Membership M M where
   mem x y := sM.RelMap memRel.mem ![y, x]
 
-open Lean PrettyPrinter.Delaborator SubExpr in
-@[app_delab Subtype]
-meta def delabSubtypeSetLike : Delab := whenPPOption getPPNotation do
-  let #[_, .lam n _ body _] := (← getExpr).getAppArgs | failure
-  guard <| body.isAppOf ``Membership.mem
-  let #[_, _, inst, _, .bvar 0] := body.getAppArgs | failure
-  guard <| inst.isAppOfArity ``instMembershipZFStructure 2
-  let S ← withAppArg <| withBindingBody n <| withNaryArg 3 delab
-  `(↥$S)
-
 instance : HasSubset M where
   Subset x y := ∀ ⦃z⦄, z ∈ x → z ∈ y
 
@@ -131,7 +121,7 @@ class ElementaryEmbeddingClass
 instance : ElementaryEmbeddingClass (M ↪ₑ[𝓛_ZF] N) M N where
   map_formula := fun j => j.map_formula'
 
-def Fin.two_def {α} (x : Fin 2 → α) : x = ![x 0, x 1] := by
+lemma Fin.two_def {α} (x : Fin 2 → α) : x = ![x 0, x 1] := by
   ext i; fin_cases i <;> simp
 
 @[realize_simps] lemma relMap_mem_iff_membership {v : Fin 2 → M} :
