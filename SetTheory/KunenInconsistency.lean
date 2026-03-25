@@ -150,7 +150,7 @@ lemma injective_s : Injective s := by
     dsimp only at hβ
     exact (hβ.some_mem.2 ⟨_, lt⟩ s_eq).elim
 
-lemma s_n_mem_X : ∀ α n, (s α n).1 ∈ X α := by
+lemma s_mem_X : ∀ α n, (s α n).1 ∈ X α := by
   intro α n
   simp only [s]
   generalize_proofs hα
@@ -205,7 +205,7 @@ lemma is_omega_jonsson_fSet : IsOmegaJonssonFunc fSet κω := by
     simpa [comp_assoc] using hg
   rw [cardEq_iff] at card_eq
   obtain ⟨α, ⟨_⟩, ⟨_⟩⟩ := exists_γ_and_X_eq α_lt_κω H_sub_κω card_eq
-  exact ⟨fun n => ⟨s α n, s_n_mem_X α n⟩, f_s_eq_γ⟩
+  exact ⟨fun n => ⟨s α n, s_mem_X α n⟩, f_s_eq_γ⟩
 
 def κFunc (n : ℕ) : κω := ⟨κ n, κ_mem_κω _⟩
 def κFuncSet := funcToSet (κFunc ∘ omegaEquiv)
@@ -297,7 +297,8 @@ end KunenBoundParams
 
 open FirstOrder Language Order ZFSet
 
-theorem kunen_inconsistency_vonNeumann (μ) [Fact (IsSuccLimit μ)]
+theorem kunen_inconsistency_vonNeumann
+    (μ : Ordinal.{0}) [Fact (IsSuccLimit μ)]
     (j : NontrivialElementaryEmbedding (V_ μ)) :
     ⨆ n : ℕ, toOrdinal ⟨j^[n] (crit j), isOrdinal_crit_iter n⟩ = μ := by
   set! κ : ℕ → Ordinals (V_ μ) := fun n => ⟨j^[n] (crit j), isOrdinal_crit_iter n⟩ with hκ

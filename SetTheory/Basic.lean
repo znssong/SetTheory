@@ -76,15 +76,15 @@ prefix:max "⇓" => toZFSet
 
 instance : ToV ZFSet.{0} := ⟨fun x => ⟨x⟩⟩
 
-instance structureV : 𝓛_ZF.Structure V where
-  RelMap | .mem => fun x => (x 0).1 ∈ (x 1).1
-
 instance structureZFSet {A : ZFSet.{0}} : 𝓛_ZF.Structure A where
   RelMap | .mem => fun x => (x 0).1 ∈ (x 1).1
 
 lemma mem_inside_ZFSet {A : ZFSet} {x y : A} : x ∈ y ↔ x.1 ∈ y.1 := Iff.rfl
 
-@[class] inductive IsVonNeumann (α) [s : ZFStructure α] where
+instance structureV : 𝓛_ZF.Structure V where
+  RelMap | .mem => fun x => (x 0).1 ∈ (x 1).1
+
+@[class] inductive IsVonNeumann (α) [s : ZFStructure α]
   | vonNeumann (μ) (hμ : IsSuccLimit μ) (eq : Sigma.mk α s = ⟨V_ μ, structureZFSet⟩)
   | V (eq : Sigma.mk α s = ⟨V, structureV⟩)
 
